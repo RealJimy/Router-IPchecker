@@ -21,7 +21,7 @@ $ perl zyxel_ip.pl
 
 Зависимости
 -----------
-Modern::Perl
-File::Basename
-Net::Telnet
-Socket
+- Modern::Perl
+- File::Basename
+- Net::Telnet
+- Socket
