@@ -5,8 +5,9 @@ use File::Basename;
 use Net::Telnet;
 use Socket;
 
-our $dirname = dirname(__FILE__);
-my $zyxelAccess = {
+our $log_path =  dirname(__FILE__) . '/logs';
+
+my $routerAccess = {
     'IP' => '192.168.1.1',
     'Login'  => 'user',
     'Pass'   => 'pass',
@@ -20,13 +21,13 @@ my $problems      = 0;
 my %interfaces = ( 'PPPoE0' => 200, 'PPPoE1' => 100 );
 
 foreach my $ifaceName ( keys %interfaces ) {
-    my ( $params, $errors ) = &checkConnection( $ifaceName, $zyxelAccess );
+    my ( $params, $errors ) = &checkConnection( $ifaceName, $routerAccess );
     while ($errors) {
         $problems = 1;
         &logger(@$errors);
         ( $params, $errors ) = &changePriority(
             $ifaceName,
-            $zyxelAccess,
+            $routerAccess,
             &randomPriority(
                 $params->{'priority'} ? $params->{'priority'} : 0,
                 $interfaces{$ifaceName},
@@ -153,12 +154,11 @@ sub checkConnection() {
 sub logger() {
     my @logTime = localtime();
 
-    our $dirname;
+    our $log_path;
     open(
         my $flog,
         '>>',
-        $dirname
-          . '/logs/zyxel_IP_check_'
+        $log_path . '/router_IP_check_'
           . ( $logTime[5] + 1900 )
           . sprintf( "%02d", $logTime[4] + 1 ) . '.log'
     ) or die $!;
